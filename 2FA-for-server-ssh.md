@@ -1,7 +1,7 @@
 ---
 layout: single
 type: docs
-permalink: /docs/
+permalink: /docs/2FA-for-server-ssh
 redirect_from:
   - /theme-setup/
 last_modified_at: 2023-07-13
