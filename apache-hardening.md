@@ -7,9 +7,9 @@ redirect_from:
 last_modified_at: 2023-07-19
 last_modified_by: Mohammad_Asif
 toc: true
-title: "Apache Hardening for Faveo Security Implications"
+title: "Apache Hardening for Security Implications"
 ---
-
+# Apache Hardening for Security Implications
 <img alt="Apache" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7ZgLOdo0TtCe4GOWoPmYEhyXY-ax2iILAzizZbFomQl-K7PNJh-i_Q8syiwIlR0Bfw1A&usqp=CAU" width="180"/>
 
 The web server has a crucial role in web-based applications. Since most of us leave it to the default configuration, it can leak sensitive data regarding the web server.
