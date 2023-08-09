@@ -9,6 +9,7 @@ last_modified_by: Mohammad_Asif
 toc: true
 title: "How to enable two-factor authentication (2FA) for SSH"
 ---
+# How to enable two-factor authentication (2FA) for SSH
   - [<strong>1. Create a normal user account</strong>](#1Create-a-normal-user-account)
   - [<strong>2. Disable SSH logins for root</strong>](#2Disable-SSH-logins-for-root)
   - [<strong>3. Install an authenticator app on a mobile device</strong>](#3Install-an-authenticator-app-on-a-mobile-device)
