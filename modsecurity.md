@@ -135,13 +135,13 @@ find the below lines and uncomment them and add the lines as below.
 ```
 after uncommneting the above lines and add the DELETE PUT PATCH as below.
 ```
-#SecAction \
-# "id:900200,\
-#  phase:1,\
-#  nolog,\
-#  pass,\
-#  t:none,\
-#  setvar:'tx.allowed_methods=GET HEAD POST OPTIONS DELETE PUT PATCH'"
+SecAction \
+ "id:900200,\
+  phase:1,\
+  nolog,\
+  pass,\
+  t:none,\
+  setvar:'tx.allowed_methods=GET HEAD POST OPTIONS DELETE PUT PATCH'"
 ```
 
 14. Once the above are done the faveo will work without any issues we need to restart the apache2 so the changes to be effect.
