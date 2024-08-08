@@ -4,7 +4,7 @@ type: docs
 permalink: /docs//apache-hardening/
 redirect_from:
   - /theme-setup/
-last_modified_at: 2023-07-19
+last_modified_at: 2024-08-08
 last_modified_by: Mohammad_Asif
 toc: true
 title: "Apache Hardening for Security Implications"
@@ -22,6 +22,11 @@ By applying numerous configuration tweaks we can make Apache withstand malicious
  - [<strong>4. Click Jacking defense with X-Frame Options</strong>](#4Click-Jacking-defense-with-X-Frame-Options)
  - [<strong>5. Basic XSS Protection</strong>](#5Basic-XSS-Protection)
  - [<strong>6. Enable HttpOnly and Secure Flag</strong>](#6Enable-HttpOnly-and-Secure-Flag)
+ - [<strong>7. Disable ETag</strong>](#7Disable-ETag)
+ - [<strong>8. Enable HTTP/2 Protocol</strong>](#8Enable-HTTP/2-Protocol)
+ - [<strong>9. Set Referrer Policy</strong>](#9Set-Referrer-Policy)
+ - [<strong>10. Set Permissions Policy</strong>](#10Set-Permissions-Policy)
+ - [<strong>11. Enforce HSTS (HTTP Strict Transport Security)</strong>](#11Enforce-HSTS-(HTTP-Strict-Transport-Security))
 ---
 
 
@@ -76,6 +81,14 @@ systemctl restart httpd
 systemctl restart apache2
 ```
 
+The ServerTokens Prod and ServerSignature Off directives hide the server version and detailed information from server-generated pages and HTTP headers.
+
+ServerTokens Prod: This hides the version of Apache and other information to make it harder for attackers to exploit known vulnerabilities.
+
+ServerSignature Off: This hides the Apache version and other details on server-generated pages, reducing the information available to potential attackers.
+
+---
+
  <a id="2Disable-HTTP-Trace-Method" name="2Disable-HTTP-Trace-Method"></a>
 
 ### <strong>2. Disable HTTP Trace Method</strong>
@@ -117,6 +130,9 @@ systemctl restart httpd
 ```
 systemctl restart apache2
 ```
+TraceEnable Off: The TraceEnable Off directive disables the HTTP TRACE method, which can be used in cross-site tracing attacks.
+
+---
 
  <a id="3Disable-Directory-Listing" name="3Disable-Directory-Listing"></a>
 
@@ -169,6 +185,10 @@ systemctl restart httpd
 systemctl restart apache2
 ```
 
+Options -Indexes +FollowSymLinks: The Options -Indexes +FollowSymLinks directive in the <Directory> section disables directory listingand allows symbolic links, which prevents information disclosure when no index file is present.
+
+---
+
  <a id="4Click-Jacking-defense-with-X-Frame-Options" name="4Click-Jacking-defense-with-X-Frame-Options"></a>
 
 ### <strong>4. Click Jacking defense with X-Frame Options</strong>
@@ -211,6 +231,10 @@ systemctl restart httpd
 systemctl restart apache2
 ```
 
+Header set X-Frame-Options "SAMEORIGIN": The Header set X-Frame-Options "SAMEORIGIN" directive prevents your content from being framed and potentially clickjacked. This prevents clickjacking attacks by only allowing your site to be framed by pages from the same origin.
+
+---
+
  <a id="5Basic-XSS-Protection" name="5Basic-XSS-Protection"></a>
 
 ### <strong>5. Basic XSS Protection</strong>
@@ -252,7 +276,9 @@ systemctl restart httpd
 systemctl restart apache2
 ```
 
+Header set XSS-Protection "1; mode=block": The Header set XSS-Protection "1; mode=block" directive enables the browser's XSS protection and instructs it to block rather than sanitize the page. This enables cross-site scripting (XSS) protection in browsers and instructs them to block the page if an XSS attack is detected.
 
+---
 
   <a id="6Enable-HttpOnly-and-Secure-Flag" name="6Enable-HttpOnly-and-Secure-Flag"></a>
 
@@ -310,4 +336,316 @@ systemctl restart httpd
 ```
 systemctl restart apache2
 ```
+
+Header edit Set-Cookie ^(.*)$ "$1;HttpOnly;Secure": The Header edit Set-Cookie ^(.*)$ "$1; HttpOnly; Secure" directive ensures that cookies are marked as HttpOnly and Secure, protecting them from client-side scripts and ensuring they are only sent over HTTPS.
+
+---
+
+  <a id="7Disable-ETag" name="7Disable-ETag"></a>
+
+### <strong>7. Disable ETag</strong>
+
+The FileETag None directive disables the generation of ETag headers, which can expose information about the inode, size, and modification date of files on your server. Disabling ETag improves privacy and security.
+
+1. Edit your Apache server configuration file using Nano.
+
+- For RHEL Based Systems:
+```
+nano /etc/httpd/conf/httpd.conf
+```
+
+- For Debian Based Systems:
+```
+nano /etc/apache2/conf-enabled/security.conf
+```
+
+2. Add the following line:
+```
+FileETag None
+```
+
+3. Save and exit the file:
+```
+Ctrl + x
+```
+
+4. Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+FileETag None: The FileETag None directive disables ETag headers, which can help prevent revealing server-side information and reduce cache-related issues.
+
+---
+
+  <a id="8Enable-HTTP/2-Protocol" name="8Enable-HTTP/2-Protocol"></a>
+
+### <strong>8. Enable HTTP/2 Protocol</strong>
+
+The Protocols h2 http/1.1 directive enables the HTTP/2 protocol, which provides significant performance improvements over HTTP/1.1.
+
+1. Edit your Apache server configuration file using Nano.
+
+- For RHEL Based Systems:
+```
+nano /etc/httpd/conf/httpd.conf
+```
+
+- For Debian Based Systems:
+```
+nano /etc/apache2/conf-enabled/security.conf
+```
+
+2. Add the following line:
+```
+Protocols h2 http/1.1
+```
+
+3. Save and exit the file:
+```
+Ctrl + x
+```
+
+4. Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+Protocols h2 http/1.1: The Protocols h2 http/1.1 directive enables HTTP/2 for improved performance and compatibility.
+
+---
+
+  <a id="9Set-Referrer-Policy" name="9Set-Referrer-Policy"></a>
+
+### <strong>9. Set Referrer Policy</strong>
+
+The Referrer-Policy header controls how much referrer information should be included with requests. The strict-origin policy ensures that only the origin is sent as the referrer when navigating from HTTPS to HTTP.
+
+1. Edit your Apache server configuration file using Nano.
+
+- For RHEL Based Systems:
+```
+nano /etc/httpd/conf/httpd.conf
+```
+
+- For Debian Based Systems:
+```
+nano /etc/apache2/conf-enabled/security.conf
+```
+
+2. Add the following line:
+```
+Header always set Referrer-Policy "strict-origin"
+```
+
+3. Save and exit the file:
+```
+Ctrl + x
+```
+
+4. Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+Header always set Referrer-Policy "strict-origin": The Header always set Referrer-Policy "strict-origin" directive controls the amount of referrer information sent with requests enhancing privacy and security.
+
+---
+
+  <a id="10Set-Permissions-Policy" name="10Set-Permissions-Policy"></a>
+
+### <strong>10. Set Permissions Policy</strong>
+
+The Permissions-Policy header allows you to control which browser features can be used within your site. This enhances security by restricting access to potentially harmful features.
+
+1. Edit your Apache server configuration file using Nano.
+
+- For RHEL Based Systems:
+```
+nano /etc/httpd/conf/httpd.conf
+```
+
+- For Debian Based Systems:
+```
+nano /etc/apache2/conf-enabled/security.conf
+```
+
+2. Add the following line:
+```
+Header always set Permissions-Policy "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(self), payment=()"
+```
+
+3. Save and exit the file:
+```
+Ctrl + x
+```
+
+4. Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+The Header always set Permissions-Policy "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(self), payment=()" directive restricts browser features that can be used within your site. This restricts various browser features like geolocation and camera access to improve security.
+
+---
+
+  <a id="11Enforce-HSTS-(HTTP-Strict-Transport-Security)" name="11Enforce-HSTS-(HTTP-Strict-Transport-Security)"></a>
+
+### <strong>11. Enforce HSTS (HTTP Strict Transport Security)</strong>
+
+HSTS tells browsers to only communicate with your site over HTTPS, preventing protocol downgrade attacks.
+
+
+1. Edit your Apache server configuration file using Nano.
+
+- For RHEL Based Systems:
+```
+nano /etc/httpd/conf/httpd.conf
+```
+
+- For Debian Based Systems:
+```
+nano /etc/apache2/conf-enabled/security.conf
+```
+
+2. Add the following line:
+```
+<If "%{HTTPS} == 'on'">
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains"
+</If>
+```
+
+3. Save and exit the file:
+```
+Ctrl + x
+```
+
+4. Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+The Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains" directive ensures that browsers only communicate with your site over HTTPS.
+
+---
+
+## Apache Virtual Host Configuration for Security Hardening
+
+Here is the combined configuration for RHEL-based and Debian-based systems, summarized from all 11 points, to be placed in the virtual host configuration files. Here we are directly making changing in a single virtual host file for a particular website.
+
+### Enabling and Applying Configuration:
+
+- For RHEL-based Systems:
+  
+Edit or create the site-specific configuration file:
+```
+nano /etc/httpd/conf.d/website.conf
+```
+
+- For Debian-based Systems:
+  
+Edit or create the site-specific configuration file:
+```
+nano /etc/apache2/sites-available/website.conf
+```
+
+### Add the Configuration (Virtual Host File)
+```
+<IfModule mod_ssl.c>
+  FileETag None
+  ServerTokens Prod
+  ServerSignature Off
+  TraceEnable Off
+  Protocols h2 http/1.1
+
+  # Security Headers
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin"
+  Header always set Permissions-Policy "geolocation=(), midi=(), sync-xhr=(), microphone=(), camera=(), magnetometer=(), gyroscope=(), fullscreen=(self), payment=()"
+  Header edit Set-Cookie ^(.*)$ "$1;HttpOnly;Secure"
+  <If "%{HTTPS} == 'on'">
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains"
+  </If>
+
+  <VirtualHost *:443>
+    ServerName example.com
+    DocumentRoot /var/www/html
+
+    <Directory /var/www/html>
+      Options -Indexes +FollowSymLinks
+      AllowOverride All
+      Require all denied
+
+      <RequireAll>
+        Require ip 192.168.1.0/24
+        Require ip 10.20.30.40.0/24 60.70.80.90 100.200.300.400                # Multiple IPs can be added
+      </RequireAll>
+    </Directory>
+    
+    ErrorLog /var/log/apache2/error.log
+    CustomLog /var/log/apache2/access.log combined
+
+    <Location "/server-status">
+      SetHandler server-status
+      Require local
+    </Location>
+
+    Include /etc/apache2/options-ssl-apache.conf
+    SSLCertificateFile /etc/apache2/sites-available/ssl/your-certificate.crt
+    SSLCertificateKeyFile /etc/apache2/sites-available/ssl/your-private.key
+    SSLCertificateChainFile /etc/apache2/sites-available/ssl/your-ca-cert.crt
+  </VirtualHost>
+</IfModule>
+```
+### Restart Apache.
+
+- For RHEL Based Systems:
+```
+systemctl restart httpd
+```
+
+- For Debian Based Systems:
+```
+systemctl restart apache2
+```
+
+AllowOverride All: This allows the use of .htaccess files for directory-specific configuration.
+
+Require all denied / <RequireAll>...Require ip...</RequireAll>: This restricts access to your site to specific IP addresses, enhancing security by limiting who can connect.
 
