@@ -99,11 +99,11 @@ Then proceed to the next step to switch to the `event` MPM.
 Run the following commands to replace `prefork` with `event` MPM and enable PHP via FPM:
 
 ```bash
-sudo a2dismod php8.2
+sudo a2dismod php8.4
 sudo a2dismod mpm_prefork
 sudo a2enmod mpm_event
 sudo a2enmod proxy_fcgi setenvif
-sudo a2enconf php8.2-fpm
+sudo a2enconf php8.4-fpm
 ```
 
 **Explanation:**
