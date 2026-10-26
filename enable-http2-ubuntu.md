@@ -1,5 +1,5 @@
 ---
-last_modified_at: 2025-06-13
+last_modified_at: 2026-10-26
 last_modified_by: Mohammad_Asif
 title: "How to enable HTTP/2 Protocol on Apache (Ubuntu)"
 ---
@@ -137,7 +137,7 @@ You should now see an `HTTP/2` status in the output.
 |-------|----------|
 | **`HTTP/1.1` shown instead of `HTTP/2`** | Ensure you’ve switched to `mpm_event` and added `Protocols h2 http/1.1` in the SSL virtual host block. |
 | **Apache fails to start after module changes** | Check logs via `journalctl -xe` or `/var/log/apache2/error.log`. |
-| **PHP pages not loading after switching MPM** | Ensure PHP-FPM is installed and running: `sudo systemctl status php8.2-fpm`. |
+| **PHP pages not loading after switching MPM** | Ensure PHP-FPM is installed and running: `sudo systemctl status php8.4-fpm`. |
 
 ---
 
